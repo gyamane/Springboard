@@ -118,3 +118,14 @@ FROM (	SELECT f.name AS facility,
 /* Q10: Produce a list of facilities with a total revenue less than 1000.
 The output of facility name and total revenue, sorted by revenue. Remember
 that there's a different cost for guests and members! */
+SELECT *
+FROM (	SELECT f.name AS facility,
+			SUM(CASE WHEN b.memid = 0 THEN f.guestcost * b.slots
+				ELSE f.membercost * b.slots END) AS revenue
+		FROM Bookings b JOIN Facilities f ON b.facid = f.facid
+			JOIN Members m ON b.memid = m.memid
+     	GROUP BY f.name) subquery
+WHERE revenue < 1000
+ORDER BY revenue
+
+
